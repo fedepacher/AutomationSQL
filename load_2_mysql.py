@@ -65,6 +65,7 @@ def check_unknow_char(column_list=None):
      Args:
         column_list (list): Column list to be returned.
     """
+    variable = ''
     pass
 
 
