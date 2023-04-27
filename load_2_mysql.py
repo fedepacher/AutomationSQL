@@ -8,6 +8,8 @@ import re
 import argparse
 import json
 import pandas as pd
+import logging
+from pathlib import Path
 
 from mysql_lib import MySQLClass
 
@@ -34,7 +36,22 @@ def create_csv_store_path(csv_path=''):
     Args:
         csv_path (str): Path where CSV files will be stored.
     """
-    pass
+    # Create a Path object from the given csv_path
+    csv_dir = Path(csv_path)
+    
+    # Check if the directory represented by the Path object already exists
+    if not csv_dir.exists():
+        try:
+            # If it doesn't exist, create the directory along with any intermediate directories if necessary
+            csv_dir.mkdir(parents=True, exist_ok=False)
+        except FileExistsError:
+            # If there's an error creating the directory, log an error message and exit the program
+            logging.error('Cannot create %s', csv_path)
+            sys.exit(0)
+    
+    # If the directory is successfully created, log a confirmation message
+    logging.info('%s folder created', csv_path)
+
 
 
 def convert_file_to_csv(load_path='', csv_path=''):
