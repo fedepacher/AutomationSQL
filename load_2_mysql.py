@@ -44,8 +44,30 @@ def convert_file_to_csv(load_path='', csv_path=''):
         load_path (str): Path that contains files to be converted.
         csv_path (str): Path where CSV files will be stored.
     """
-    pass
 
+
+# Get all xls and csv files in the load folder
+    file_list = os.listdir(load_path)
+    xls_files = [f for f in file_list if f.endswith('.xls')]
+    csv_files = [f for f in file_list if f.endswith('.csv')]
+
+# Convert xls files to csv and copy csv files to the destination folder
+    for file in xls_files + csv_files:
+        try:
+            if file.endswith('.xls'):
+                df_data = pd.read_excel(os.path.join(load_path, file))
+                filename, ext = os.path.splitext(file)
+                csv_filename = f'{filename}.csv'
+                df_data.to_csv(os.path.join(csv_path, csv_filename), index=None, header=True)
+            elif file.endswith('.csv'):
+                shutil.copyfile(os.path.join(load_path, file), os.path.join(csv_path, file))
+            print(f'{file} has been converted and saved in {csv_path}')
+        except Exception as error:
+            print(error)
+            print(f'An error occurred while processing {file}')
+            sys.exit(0)
+
+    print('Conversion completed successfully!')
 
 def get_column_from_csv(csv_table_files=None, separator_list=None, column_list=None, csv_path=''):
     """Get column names list from csv files.
