@@ -86,8 +86,17 @@ def get_passwords():
         (str): Database Workbench password.
         (str): Linux admin password.
     """
-    pass_db = ''
-    pass_sudo = ''
+
+    try:
+        with open('pass.json', 'r') as data:
+            data_dic = json.load(data)
+
+        pass_db = data_dic["workbench"]
+        pass_sudo = data_dic["linux"]
+
+    except FileNotFoundError:
+        print('The <pass_file> file does not exist. Please read the README.md file')
+        sys.exit()      
 
     return pass_db, pass_sudo
 
