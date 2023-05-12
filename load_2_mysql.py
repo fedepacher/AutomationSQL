@@ -89,7 +89,75 @@ def get_query_table(csv_table_files=None, column_list=None, query_list=None):
         column_list (list): List where csv columns are stored.
         query_list (list): List of query to create MySQL table.
     """
-    pass
+    query_list = []
+    AuxIndice = 0
+
+    # Aqui saco los nombres de las columnas como str , y valida los nombres para declararlos segun corresponda
+
+    #Declaramos variables auxiliares a usar para los ciclos y listas
+    AuxWhile1 = 0
+    AuxWhile2 = 0
+    Aux_List_Columns = []
+    Aux_Nombre_Columnas = ""
+
+    # Aqui saco los nombre de las columnas como str para poder añadirlos al str principal
+
+    while AuxWhile1 < len(column_list):
+
+        while AuxWhile2 < len(column_list[AuxWhile1]):
+
+            # AQUI VALIDAMOS QUE EL NOMBRE DE LA COLUMNA TENGA "ID" AL INICIO
+            if column_list[AuxWhile1][AuxWhile2][:2] in ["id" , "ID" , "Id"] :
+
+                if (AuxWhile2 + 1) == len(column_list[AuxWhile1]):
+                    Aux_Nombre_Columnas += column_list[AuxWhile1][AuxWhile2] + " INT"
+                    AuxWhile2 += 1
+
+                else:
+                    Aux_Nombre_Columnas += column_list[AuxWhile1][AuxWhile2] + " INT, "
+                    AuxWhile2 += 1
+
+            # AQUI VALIDAMOS QUE EL NOMBRE DE LA COLUMNA TENGA "Fecha" AL INICIO
+            if column_list[AuxWhile1][AuxWhile2][:5] in ["fecha" , "Fecha" , "FECHA"] :
+
+                if (AuxWhile2 + 1) == len(column_list[AuxWhile1]):
+                    Aux_Nombre_Columnas += column_list[AuxWhile1][AuxWhile2] + " DATE"
+                    AuxWhile2 += 1
+
+                else:
+                    Aux_Nombre_Columnas += column_list[AuxWhile1][AuxWhile2] + " DATE, "
+                    AuxWhile2 += 1
+
+            # AQUI AGREGAMOS "VARCHAR(200)" YA QUE NO TIENE "ID" NI "FECHA"
+            else:
+
+                if (AuxWhile2 + 1) == len(column_list[AuxWhile1]):
+                    Aux_Nombre_Columnas += column_list[AuxWhile1][AuxWhile2] + " VARCHAR(200)"
+                    AuxWhile2 += 1
+
+                else:
+                    Aux_Nombre_Columnas += column_list[AuxWhile1][AuxWhile2] + " VARCHAR(200), "
+                    AuxWhile2 += 1
+
+        Aux_List_Columns.append(Aux_Nombre_Columnas)
+        Aux_Nombre_Columnas = ""
+        AuxWhile1 += 1
+        AuxWhile2 = 0
+
+    for i in csv_table_files:
+
+        # Aqui me encargo de quitarle el " .csv " a los nombres de los archivos
+        # para darle los nombres a las tablas
+        TableName = i
+        n = 4
+        TableName = TableName[:-n]
+
+        # Aqui se crea el String y se almacena en la lista de Querys
+        query_list.append("CREATE TABLE IF NOT EXISTS " + TableName + " (" + Aux_List_Columns[AuxIndice] + ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;")
+        print('\n')
+        AuxIndice += 1
+
+    return query_list
 
 
 def get_passwords():
